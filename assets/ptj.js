@@ -177,3 +177,175 @@ themeButton.addEventListener("click", () => {
   localStorage.setItem("selected-theme", getCurrentTheme());
   localStorage.setItem("selected-icon", getCurrentIcon());
 });
+
+/*==================== SCROLL REVEAL ANIMATION ====================*/
+function reveal() {
+  const reveals = document.querySelectorAll('.section, .about__img, .skills__content, .portfolio__content, .contact__information');
+  
+  reveals.forEach(element => {
+    const windowHeight = window.innerHeight;
+    const elementTop = element.getBoundingClientRect().top;
+    const elementVisible = 150;
+    
+    if (elementTop < windowHeight - elementVisible) {
+      element.classList.add('reveal');
+      element.classList.add('active');
+    }
+  });
+}
+
+window.addEventListener('scroll', reveal);
+reveal(); // Call once on load
+
+/*==================== SMOOTH PARALLAX EFFECT ====================*/
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  const parallaxElements = document.querySelectorAll('.home__blob, .home__data');
+  
+  parallaxElements.forEach((element, index) => {
+    const speed = (index + 1) * 0.05;
+    element.style.transform = `translateY(${scrolled * speed}px)`;
+  });
+});
+
+/*==================== TYPING EFFECT FOR HOME TITLE ====================*/
+const homeTitle = document.querySelector('.home__title');
+if (homeTitle) {
+  const originalText = homeTitle.textContent;
+  homeTitle.textContent = '';
+  let charIndex = 0;
+  
+  function typeWriter() {
+    if (charIndex < originalText.length) {
+      homeTitle.textContent += originalText.charAt(charIndex);
+      charIndex++;
+      setTimeout(typeWriter, 150);
+    }
+  }
+  
+  // Start typing effect after a short delay
+  setTimeout(typeWriter, 500);
+}
+
+/*==================== ENHANCED BUTTON RIPPLE EFFECT ====================*/
+const buttons = document.querySelectorAll('.button');
+buttons.forEach(button => {
+  button.addEventListener('click', function(e) {
+    const ripple = document.createElement('span');
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+    
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    ripple.classList.add('ripple');
+    
+    this.appendChild(ripple);
+    
+    setTimeout(() => {
+      ripple.remove();
+    }, 600);
+  });
+});
+
+/*==================== SMOOTH SCROLL FOR NAVIGATION ====================*/
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
+
+/*==================== PORTFOLIO IMAGE LAZY LOADING ====================*/
+const portfolioImages = document.querySelectorAll('.portfolio__img');
+const imageObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      img.style.opacity = '0';
+      img.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => {
+        img.style.opacity = '1';
+      }, 100);
+      observer.unobserve(img);
+    }
+  });
+}, {
+  threshold: 0.1
+});
+
+portfolioImages.forEach(img => {
+  imageObserver.observe(img);
+});
+
+/*==================== SKILLS PROGRESS ANIMATION ====================*/
+const skillsSection = document.querySelector('.skills');
+let skillsAnimated = false;
+
+const skillsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !skillsAnimated) {
+      const skillBars = document.querySelectorAll('.skills__percentage');
+      skillBars.forEach(bar => {
+        const width = bar.style.width || bar.getAttribute('class').match(/skills__(\w+)/)?.[1];
+        bar.style.width = '0';
+        setTimeout(() => {
+          bar.style.transition = 'width 1.5s ease';
+          bar.style.width = bar.parentElement.querySelector('.skills__name').textContent.includes('C') ? '90%' :
+                            bar.parentElement.querySelector('.skills__name').textContent.includes('Java') ? '80%' :
+                            bar.parentElement.querySelector('.skills__name').textContent.includes('JavaScript') ? '75%' :
+                            bar.parentElement.querySelector('.skills__name').textContent.includes('Python') ? '70%' : '60%';
+        }, 200);
+      });
+      skillsAnimated = true;
+    }
+  });
+}, {
+  threshold: 0.3
+});
+
+if (skillsSection) {
+  skillsObserver.observe(skillsSection);
+}
+
+/*==================== MOUSE CURSOR EFFECT ====================*/
+const cursor = document.createElement('div');
+cursor.classList.add('custom-cursor');
+document.body.appendChild(cursor);
+
+document.addEventListener('mousemove', (e) => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+// Add cursor effect on interactive elements
+const interactiveElements = document.querySelectorAll('a, button, .button, .nav__link, .skills__header');
+interactiveElements.forEach(element => {
+  element.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'scale(1.5)';
+    cursor.style.backgroundColor = 'var(--first-color)';
+  });
+  
+  element.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'scale(1)';
+    cursor.style.backgroundColor = 'var(--first-color-alt)';
+  });
+});
+
+/*==================== LOADING ANIMATION ====================*/
+window.addEventListener('load', () => {
+  document.body.style.opacity = '0';
+  setTimeout(() => {
+    document.body.style.transition = 'opacity 0.5s ease';
+    document.body.style.opacity = '1';
+  }, 100);
+});
